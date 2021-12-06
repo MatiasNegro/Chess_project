@@ -28,15 +28,19 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
     gs = ChessEngine.GameState()
+    validMoves = gs.getValidMoves()
+    moveMade = False #Variabile di controllo quando una mossa viene fatta (cambio del GameState)
     loadImages() #Quest'operazione viene eseguita una sola volta, prima del while
     running = True
     sqSelected = ()#Inizialmente nessun quadrato è selezionato,m tiene traccia dell'ultimo clock dell'utente (tuple: (row,column))
     playerClicks = [] #Tiene traccia dei click dell'utente (due tuple: [(6, 4), (4,4)]) posizione iniziale del pezzo mosso  e finale
     
+
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
+            #controllore del mouse
             elif e.type == p.MOUSEBUTTONDOWN:
                 location = p.mouse.get_pos() #Coordinate (x,y) del mouse quando viene premuto il bottone
                 col = location[0] // SQ_SIZE
@@ -49,10 +53,21 @@ def main():
                     playerClicks.append(sqSelected) #Mette in coda primo e secondo click
                 if len(playerClicks) == 2: #Dopo il secondo click
                     move = ChessEngine.Move(playerClicks[0],playerClicks[1], gs.board)
-                    print(move.getChessNotation)
-                    gs.makeMove(move)
+                    print(move.getChessNotation())
+                    if move in validMoves:
+                        gs.makeMove(move)
+                        moveMade = True
+                        gs.makeMove(move)
                     sqSelected = () #Reset degli input utente
                     playerClicks = []
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z: #Se viene premuto il tasto "z" viene riportata la scacchiera alla mossa (t-1)
+                    gs.undoMove()
+                    moveMade = False
+        
+        if moveMade:
+            validMoves = gs.getValidMoves()
+            moveMade = False
 
 
         drawGameState(screen, gs)

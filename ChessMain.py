@@ -57,7 +57,6 @@ def main():
                     if move in validMoves:
                         gs.makeMove(move)
                         moveMade = True
-                        gs.makeMove(move)
                     sqSelected = () #Reset degli input utente
                     playerClicks = []
             elif e.type == p.KEYDOWN:

@@ -13,7 +13,7 @@ class GameState():
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "bP", "--", "--", "--", "--", "--"],
+            ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["wP", "wP" ,"wP" ,"wP" ,"wP" ,"wP" ,"wP" ,"wP"],
             ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]
         ]
@@ -30,7 +30,9 @@ class GameState():
         self.board[move.startRow][move.startCol] = "--"
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.moveLog.append(move) #Aggiungo la mossa al log delle mosse definito in precedenza
+        print("ENTRO")
         self.whiteToMove = not self.whiteToMove #Cambio del turno se era bianco ora tocca al nero e viceversa
+        print(self.whiteToMove)
 
     #Torna indietro alla mossa eseguita prima di quella attuale
     def undoMove(self):
@@ -74,8 +76,18 @@ class GameState():
             if c+1 <= 7: #Cattura a destra
                 if self.board[r-1][c+1][0] == 'b':
                     moves.append(Move((r, c), (r-1, c+1), self.board))
-        else:
-            pass
+        else: #Pezzi neri
+            if self.board[r+1][c] == "--": #Avanzamento di una posizione
+                moves.append(Move((r, c), (r+1, c), self.board))
+                if r == 1 and self.board[r+2][c] == "--": #Avanzamento di due posizioni
+                    moves.append(Move((r, c), (r+2, c), self.board))
+            #Catture
+            if c-1 >= 0:
+                if self.board[r+1][c-1][0] == 'w':
+                    moves.append(Move((r, c), (r+1, c-1), self.board))
+            if c+1 <= 7:
+                if self.board[r+1][c+1][0] == 'w':
+                    moves.append(Move((r, c), (r+1, c+1), self.board))
 
     '''
     Genero le mosse che una torre può fare in quella determinata posizione (riga, colonna) ed aggiungo tali mosse alla lista

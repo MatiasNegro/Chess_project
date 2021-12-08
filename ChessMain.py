@@ -53,7 +53,8 @@ def main():
                     playerClicks.append(sqSelected) #Mette in coda primo e secondo click
                 if len(playerClicks) == 2: #Dopo il secondo click
                     move = ChessEngine.Move(playerClicks[0],playerClicks[1], gs.board)
-                    print(move.getChessNotation())
+                    #print(move.getChessNotation())
+                    #print(str(move.startRow) + " " + str(move.startCol) + " " + str(move.endRow) + " " + str(move.endCol))
                     if move in validMoves:
                         gs.makeMove(move)
                         moveMade = True
@@ -63,6 +64,7 @@ def main():
                 if e.key == p.K_z: #Se viene premuto il tasto "z" viene riportata la scacchiera alla mossa (t-1)
                     gs.undoMove()
                     moveMade = False
+                    gs.whiteToMove = not gs.whiteToMove
         
         if moveMade:
             validMoves = gs.getValidMoves()

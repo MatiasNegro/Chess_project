@@ -117,11 +117,12 @@ class GameState():
         allyColor = "w" if self.whiteToMove else "b"
         for m in knightMoves:
             endRow = r + m[0]
-            endCol = r + m[1]
+            endCol = c + m[1]
             if 0 <= endRow < 8 and 0 <= endCol < 8:
                 endPiece = self.board[endRow][endCol]
                 if endPiece[0] != allyColor:
                     moves.append(Move((r, c), (endRow, endCol), self.board))
+                    print(Move((r, c), (endRow, endCol), self.board).moveID)
 
     
     def getBishopMoves(self,r, c, moves):
@@ -154,7 +155,7 @@ class GameState():
         allyColor = "w" if self.whiteToMove else "b"
         for i in range(8):
             endRow = r + kingMoves[i][0]
-            endCol = r + kingMoves[i][1]
+            endCol = c + kingMoves[i][1]
             if 0 <= endRow < 8 and 0 <= endCol < 8:
                 endPiece = self.board[endRow][endCol]
                 if endPiece[0] != allyColor:

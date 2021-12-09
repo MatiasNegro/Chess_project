@@ -22,6 +22,13 @@ class GameState():
                                 'Q': self.getQueenMoves, 'K': self.getKingMoves}
         self.whiteToMove = True
         self.moveLog = []
+        self.whiteKingLocation = (7, 4)
+        self.blacKingLocation = (0, 4)
+        self.checkMate = False
+        self.staleMate = False
+        self.enpassantPossible = () #Future coordinate del quadrato ove è possibile eseguire l'enpassant
+
+
     
     '''
     Prende come parametro una mossa e la esegue (Non funziona per l'arrocco, promozione del pedone e en-passant)
@@ -31,6 +38,24 @@ class GameState():
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.moveLog.append(move) #Aggiungo la mossa al log delle mosse definito in precedenza
         self.whiteToMove = not self.whiteToMove #Cambio del turno se era bianco ora tocca al nero e viceversa
+        if move.pieceMoved == 'wK':
+            self.whiteKingLocation = (move.endRow, move.endCol)
+        elif move.pieceMoved == 'bK':
+            self.blacKingLocation = (move.endRow, move.endCol)
+
+        #Promozione del pedone
+        if move.isPawnPromotion:
+            self.board[move.endRow][move.endCol] = move.pieceMoved[0] + 'Q'
+        
+        #Enpassant
+        if move.isEnpassantMove:
+            self.board[move.startRow][move.endCol] = '--' #Cattura del pedone con enpassant
+
+        if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:
+            self.enpassantPossible = ((move.startRow + move.endRow) // 2, move.startCol) 
+        else:
+            self.enpassantPossible = ()
+                
 
     #Torna indietro alla mossa eseguita prima di quella attuale
     def undoMove(self):
@@ -39,12 +64,70 @@ class GameState():
             self.board[move.startRow][move.startCol] = move.pieceMoved
             self.board[move.endRow][move.endCol] = move.pieceCaptured
             self.whiteToMove = not self.whiteToMove #cambia il turno (a quello precedente)
+        if move.pieceMoved == 'wK':
+            self.whiteKingLocation = (move.startRow, move.startCol)
+        elif move.pieceMoved == 'bK':
+            self.blacKingLocation = (move.startRow, move.startCol)
+        
+        if move.isEnpassantMove:
+            self.board[move.endRow][move.endCol] = '--' #Lascia il quadrato vuoto
+            self.board[move.startRow][move.startCol] = move.pieceCaptured
+            self.enpassantPossible = (move.endRow, move.endCol)
+        
+        if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
+            self.enpassantPossible = ()
+
 
     '''
     Mosse di controllo di scacco
     '''
     def getValidMoves(self):
-        return self.getAllPossibleMoves() 
+        tempEnpassantPossible = self.enpassantPossible
+        #Utilizziamo l'algoritmo di Naiv
+        moves = self.getAllPossibleMoves()
+        for i in range(len(moves) - 1, -1, -1):#Scorro la list al contrario per evitare bug di shift degli indici sugli elementi non ancora 
+            self.makeMove(moves[i])    #controllati
+            self.whiteToMove = not self.whiteToMove
+
+            if self.inCheck():
+                moves.remove(moves[i]) #Se la mossa rende il re in scacco non è valida
+
+            self.whiteToMove = not self.whiteToMove
+            self.undoMove()
+
+        if len(moves) == 0: #Controllo che non sia scacco matto
+            if self.inCheck():
+                self.checkMate = True
+                print("SCACCO MATTO")
+            else:
+                self.staleMate = True
+        else:
+            self.checkMate = False
+            self.staleMate = False
+
+        self.enpassantPossible = tempEnpassantPossible
+
+        return moves
+
+
+    #Controllo se un re è in scacco
+    def inCheck(self):
+        if self.whiteToMove:
+            return self.squareUnderAttack(self.whiteKingLocation[0], self.whiteKingLocation[1])
+        else:
+            return self.squareUnderAttack(self.blacKingLocation[0], self.blacKingLocation[1])
+    
+    #Controllo se l'avversario può spostarsi in posizione (r, c)
+    def squareUnderAttack(self, r, c):
+        self.whiteToMove = not self.whiteToMove
+        oppMoves = self.getAllPossibleMoves()
+        for move in oppMoves:
+            if move.endRow == r and move.endCol == c: #Controllo che la posizione sia sotto attacco
+                self.whiteToMove = not self.whiteToMove
+                return True
+
+        self.whiteToMove = not self.whiteToMove
+        return False
 
     '''
     Restanti mosse (non controllanti lo scacco)
@@ -71,21 +154,32 @@ class GameState():
             if c-1 >= 0: #Cattura a sinistra
                 if self.board[r-1][c-1][0] == 'b':
                     moves.append(Move((r, c), (r-1, c-1), self.board))
+                elif (r-1, c-1) == self.enpassantPossible:
+                    moves.append(Move((r, c), (r-1, c-1), self.board, isEnpassantMove = True))
             if c+1 <= 7: #Cattura a destra
                 if self.board[r-1][c+1][0] == 'b':
                     moves.append(Move((r, c), (r-1, c+1), self.board))
+                elif (r-1, c+1) == self.enpassantPossible:
+                    moves.append(Move((r, c), (r-1, c+1), self.board, isEnpassantMove = True))
+
         else: #Pezzi neri
             if self.board[r+1][c] == "--": #Avanzamento di una posizione
                 moves.append(Move((r, c), (r+1, c), self.board))
                 if r == 1 and self.board[r+2][c] == "--": #Avanzamento di due posizioni
                     moves.append(Move((r, c), (r+2, c), self.board))
+                elif (r-1, c-1) == self.enpassantPossible:
+                    moves.append(Move((r, c), (r+2, c), self.board, isEnpassantMove = True))
             #Catture
             if c-1 >= 0:
                 if self.board[r+1][c-1][0] == 'w':
                     moves.append(Move((r, c), (r+1, c-1), self.board))
+                elif (r-1, c-1) == self.enpassantPossible:
+                    moves.append(Move((r, c), (r+1, c-1), self.board, isEnpassantMove = True))
             if c+1 <= 7:
                 if self.board[r+1][c+1][0] == 'w':
                     moves.append(Move((r, c), (r+1, c+1), self.board))
+                elif (r-1, c-1) == self.enpassantPossible:
+                    moves.append(Move((r, c), (r+1, c+1), self.board, isEnpassantMove = True))
 
         #Promozione del pedone
 
@@ -122,7 +216,6 @@ class GameState():
                 endPiece = self.board[endRow][endCol]
                 if endPiece[0] != allyColor:
                     moves.append(Move((r, c), (endRow, endCol), self.board))
-                    print(Move((r, c), (endRow, endCol), self.board).moveID)
 
     
     def getBishopMoves(self,r, c, moves):
@@ -168,13 +261,20 @@ class Move(): #Nested class -> Move può stare dentro GameState
     filesToCols = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
     colsToFiles = {v: k for k, v in filesToCols.items()}
 
-    def __init__(self, startSq, endSq, board): #Tutte le informazioni relative ad una mossa vengono definite e contenute qui
+    def __init__(self, startSq, endSq, board, isEnpassantMove = False): #Tutte le informazioni relative ad una mossa vengono definite e contenute qui
         self.startRow = startSq[0]
         self.startCol = startSq[1]
         self.endRow = endSq[0]
         self.endCol = endSq[1]
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
+        self.isPawnPromotion = False
+        if (self.pieceMoved == 'wP' and self.endRow == 0) or (self.pieceMoved == 'bP' and self.endRow == 7):
+            self.isPawnPromotion = True
+        self.isEnpassantMove = isEnpassantMove
+        if self.isEnpassantMove:
+            self.pieceCaptured = 'wP' if self.pieceMoved == 'bP' else 'bP'
+
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
 
     '''

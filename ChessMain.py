@@ -52,14 +52,16 @@ def main():
                     sqSelected = (row,col)
                     playerClicks.append(sqSelected) #Mette in coda primo e secondo click
                 if len(playerClicks) == 2: #Dopo il secondo click
-                    move = ChessEngine.Move(playerClicks[0],playerClicks[1], gs.board)
-                    #print(move.getChessNotation())
-                    #print(str(move.startRow) + " " + str(move.startCol) + " " + str(move.endRow) + " " + str(move.endCol))
-                    if move in validMoves:
-                        gs.makeMove(move)
-                        moveMade = True
-                    sqSelected = () #Reset degli input utente
-                    playerClicks = []
+                    move = ChessEngine.Move(playerClicks[0],playerClicks[1], gs.board)#TODO Fixare click lock del pezzo
+                    for i in range(len(validMoves)):
+                        if move == validMoves[i]:
+                            gs.makeMove(move)
+                            moveMade = True
+                            sqSelected = () #Reset degli input utente
+                            playerClicks = []
+                        if not moveMade:
+                            playerClicks = [sqSelected]
+
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z: #Se viene premuto il tasto "z" viene riportata la scacchiera alla mossa (t-1)
                     gs.undoMove()

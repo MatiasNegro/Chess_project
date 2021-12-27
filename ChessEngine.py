@@ -51,7 +51,7 @@ class GameState():
         if move.isEnpassantMove:
             self.board[move.startRow][move.endCol] = '--' #Cattura del pedone con enpassant
 
-        if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:
+        if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
             self.enpassantPossible = ((move.startRow + move.endRow) // 2, move.startCol) 
         else:
             self.enpassantPossible = ()
@@ -167,21 +167,18 @@ class GameState():
                 moves.append(Move((r, c), (r+1, c), self.board))
                 if r == 1 and self.board[r+2][c] == "--": #Avanzamento di due posizioni
                     moves.append(Move((r, c), (r+2, c), self.board))
-                elif (r-1, c-1) == self.enpassantPossible:
-                    moves.append(Move((r, c), (r+2, c), self.board, isEnpassantMove = True))
+                    
             #Catture
             if c-1 >= 0:
                 if self.board[r+1][c-1][0] == 'w':
                     moves.append(Move((r, c), (r+1, c-1), self.board))
-                elif (r-1, c-1) == self.enpassantPossible:
+                elif (r+1, c-1) == self.enpassantPossible:
                     moves.append(Move((r, c), (r+1, c-1), self.board, isEnpassantMove = True))
             if c+1 <= 7:
                 if self.board[r+1][c+1][0] == 'w':
                     moves.append(Move((r, c), (r+1, c+1), self.board))
-                elif (r-1, c-1) == self.enpassantPossible:
+                elif (r+1, c+1) == self.enpassantPossible:
                     moves.append(Move((r, c), (r+1, c+1), self.board, isEnpassantMove = True))
-
-        #Promozione del pedone
 
 
     '''

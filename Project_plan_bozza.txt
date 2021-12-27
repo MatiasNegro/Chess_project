@@ -1,0 +1,71 @@
+Project plan: 
+    Title: Chess(Da rivedere)
+
+    Introduction: 
+        Il progetto si prefissa la realizzazione di un software in grado di dare la possibilità a due giocatori (eventuale aggiunta di AI da vedere per giocatore singolo o 
+        funzionalità di networking per il gioco in multiplayer) di effettuare una partita di scacchi attraverso interfaccia grafica.
+        Il nostro obbiettivo è quello di poter dare quanta più affidabilità possibile nella gestione dei giocatori con molta enfasi sulla corretta amministrazione delle regole.
+        Per tale progetto abbiamo deciso di adottare un tipo di sviluppo Agile, nel preciso eXtreme Programming, data la scarsità di personale e per garantire uno sviluppo veloce
+        ed efficiente.
+
+        (Introduzione da sistemare--Solo prima bozza)
+
+        (Manca lista degli obbiettivi--Sono da definire, ovvero non sapevo cosa scrivere)
+
+        Responsabili: Matias Negro, Daniele Greco
+        
+    Process Model: Agile evolutionary model
+        Identificazione delle milestones:
+            a)Display scacchiera e pezzi (done) -> In attesa di design definitivo dei pezzi
+            b)Movimenti dei pezzi (done)
+            c)Alternanza dei turni dei giocatori (done)
+            d)Possibilità di "mangiare" i pezzi dell'avversario con relativa scomparsa dgli stessi e riposizionamento del pezzo "mangiante" (done)
+            e)Identificazine dello scacco
+            f)Mosse "aggiuntive" quali: Promozione del pedone, arrocco, enpassant (enpassant da fixare)
+            g)Aggiunta di interfaccia di inizio gioco -> play, credits (se aggiunta IA scegliere tra 1 o 2 giocatori // Se aggiunto networking scelta tra online ed offline)
+            h)Dettagli--> da definire
+        
+        Critical Path: a->b->c->d->e->f->g->h //Da rivedere ma comunque mi sembra l'ordine più sensato
+
+    Struttura organiozzativa: Chief programmer team
+        Chief programmer: Matias Negro
+        Assistant: Daniele Greco  
+        Librarian: Matias Negro
+        Tester: Daniele Greco
+
+    Standards, guidelines, procedures: CHE CAZZO CI METTO
+
+    Management Activities:
+        Report Settimanale, devo inventarmi cosa ho fatto fin'ora in accordo con il calendario
+    
+    Risks:
+        Il principale rischio riguarda le competenze dello chief programmer. In quanto si utilizza una libreria mai usata da ambo le componenti deld gruppo risulta complicata
+        l'aggiunta di nuove funzionalità al software, almeno inizialmente.
+        Al progredire del progetto abbiamo riscontrato come rischio la difficoltà delle componenti implementate quanto sull'utilizzo della libreria e del linguaggio di programmazione
+        
+    Staffing:
+        Matias Negro Tutta la durata del progetto
+        Daniele Greco Tutta la durata del progetto
+    
+    Methods and Tecniques: ???
+
+    Software Quality Assurance (SQA): 
+        Farlo testare ai nostri amici??
+
+    Decomposizione del progetto: UML -> Da fare
+
+    Rirsorse necessarie allo sviluppo:
+        HW:
+            Computer
+        SW: Compilatore python
+            pygame engine
+            ...
+    Budgeting: Dovremmo balzarlo siccome c'è sul syllabus di slatare tle capitolo??
+
+    Cambiamenti:
+        Da definire schema di gestione dei cambiamenti
+
+    Consegna:
+        Da definire schema di consegna al cliente
+    
+            

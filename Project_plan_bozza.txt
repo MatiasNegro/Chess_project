@@ -27,7 +27,7 @@ Project plan:
         
         Critical Path: a->b->c->d->e->f->g->h //Da rivedere ma comunque mi sembra l'ordine più sensato
 
-    Struttura organiozzativa: Chief programmer team
+    Struttura organizzativa: Chief programmer team
         Chief programmer: Matias Negro
         Assistant: Daniele Greco  
         Librarian: Matias Negro

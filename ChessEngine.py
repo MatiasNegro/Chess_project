@@ -53,6 +53,7 @@ class GameState():
 
         if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
             self.enpassantPossible = ((move.startRow + move.endRow) // 2, move.startCol) 
+            print('ENPASSANT POSSIBILE' +  str(self.enpassantPossible))
         else:
             self.enpassantPossible = ()
                 

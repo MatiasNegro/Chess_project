@@ -26,7 +26,7 @@ class GameState():
         self.blacKingLocation = (0, 4)
         self.checkMate = False
         self.staleMate = False
-        self.enpassantPossible = () #Future coordinate del quadrato ove è possibile eseguire l'enpassant
+        self.enpassantPossible = () #Inizializzazione delle  coordinate del quadrato ove è possibile eseguire l'enpassant
 
 
     
@@ -52,8 +52,7 @@ class GameState():
             self.board[move.startRow][move.endCol] = '--' #Cattura del pedone con enpassant
 
         if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
-            self.enpassantPossible = ((move.startRow + move.endRow) // 2, move.startCol) 
-            print('ENPASSANT POSSIBILE' +  str(self.enpassantPossible))
+            self.enpassantPossible = ((move.startRow + move.endRow) // 2, move.endCol) 
         else:
             self.enpassantPossible = ()
                 
@@ -65,18 +64,18 @@ class GameState():
             self.board[move.startRow][move.startCol] = move.pieceMoved
             self.board[move.endRow][move.endCol] = move.pieceCaptured
             self.whiteToMove = not self.whiteToMove #cambia il turno (a quello precedente)
-        if move.pieceMoved == 'wK':
-            self.whiteKingLocation = (move.startRow, move.startCol)
-        elif move.pieceMoved == 'bK':
-            self.blacKingLocation = (move.startRow, move.startCol)
+            if move.pieceMoved == 'wK':
+                self.whiteKingLocation = (move.startRow, move.startCol)
+            elif move.pieceMoved == 'bK':
+                self.blacKingLocation = (move.startRow, move.startCol)
         
-        if move.isEnpassantMove:
-            self.board[move.endRow][move.endCol] = '--' #Lascia il quadrato vuoto
-            self.board[move.startRow][move.startCol] = move.pieceCaptured
-            self.enpassantPossible = (move.endRow, move.endCol)
-        
-        if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
-            self.enpassantPossible = ()
+            if move.isEnpassantMove:
+                self.board[move.endRow][move.endCol] = '--' #Lascia il quadrato vuoto
+                self.board[move.startRow][move.endCol] = move.pieceCaptured
+                self.enpassantPossible = (move.endRow, move.endCol)
+            
+            if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
+                self.enpassantPossible = ()
 
 
     '''
@@ -102,10 +101,11 @@ class GameState():
                 print("SCACCO MATTO")
             else:
                 self.staleMate = True
-        else:
-            self.checkMate = False
-            self.staleMate = False
+        #else:
+        #    self.checkMate = False
+        #    self.staleMate = False
 
+        
         self.enpassantPossible = tempEnpassantPossible
 
         return moves
@@ -269,6 +269,7 @@ class Move(): #Nested class -> Move può stare dentro GameState
         self.isPawnPromotion = False
         if (self.pieceMoved == 'wP' and self.endRow == 0) or (self.pieceMoved == 'bP' and self.endRow == 7):
             self.isPawnPromotion = True
+
         self.isEnpassantMove = isEnpassantMove
         if self.isEnpassantMove:
             self.pieceCaptured = 'wP' if self.pieceMoved == 'bP' else 'bP'

@@ -55,12 +55,15 @@ def main():
                     move = ChessEngine.Move(playerClicks[0],playerClicks[1], gs.board)
                     print(move.getChessNotation())
                     if move in validMoves:
+                        moveIndex = validMoves.index(move)
+                        if validMoves[moveIndex].isEnpassantMove:
+                            gs.makeMove(ChessEngine.Move(playerClicks[0],playerClicks[1], gs.board, isEnpassantMove=True))
                         gs.makeMove(move)
                         moveMade = True
                         sqSelected = () #Reset degli input utente
                         playerClicks = []
                     if not moveMade:
-                        playerClicks = [sqSelected ]
+                        playerClicks = [sqSelected]
             
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z: #Se viene premuto il tasto "z" viene riportata la scacchiera alla mossa (t-1)

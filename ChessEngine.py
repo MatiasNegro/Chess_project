@@ -34,6 +34,7 @@ class GameState():
     Prende come parametro una mossa e la esegue (Non funziona per l'arrocco, promozione del pedone e en-passant)
     '''
     def makeMove(self, move):
+
         self.board[move.startRow][move.startCol] = "--"
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.moveLog.append(move) #Aggiungo la mossa al log delle mosse definito in precedenza
@@ -50,6 +51,8 @@ class GameState():
         #Enpassant
         if move.isEnpassantMove:
             self.board[move.startRow][move.endCol] = '--' #Cattura del pedone con enpassant
+            print(str(move.startRow) + " " + str(move.endCol) + "HO PREVISTO L'ENPASSANT")
+
 
         if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
             self.enpassantPossible = ((move.startRow + move.endRow) // 2, move.endCol) 
@@ -73,6 +76,7 @@ class GameState():
                 self.board[move.endRow][move.endCol] = '--' #Lascia il quadrato vuoto
                 self.board[move.startRow][move.endCol] = move.pieceCaptured
                 self.enpassantPossible = (move.endRow, move.endCol)
+                print("HO FATTO L'UNDO DELL'ENPASSANT")
             
             if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
                 self.enpassantPossible = ()
@@ -83,6 +87,7 @@ class GameState():
     '''
     def getValidMoves(self):
         tempEnpassantPossible = self.enpassantPossible
+        print("GENERO LE MOSSE DELL'AVVERSARIO")
         #Utilizziamo l'algoritmo di Naiv
         moves = self.getAllPossibleMoves()
         for i in range(len(moves) - 1, -1, -1):#Scorro la list al contrario per evitare bug di shift degli indici sugli elementi non ancora 
@@ -94,6 +99,7 @@ class GameState():
 
             self.whiteToMove = not self.whiteToMove
             self.undoMove()
+            
 
         if len(moves) == 0: #Controllo che non sia scacco matto
             if self.inCheck():

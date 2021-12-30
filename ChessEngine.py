@@ -377,8 +377,11 @@ class Move(): #Nested class -> Move può stare dentro GameState
 
         #Arrocco
         self.isCastleMove =  isCastleMove
+        if isCastleMove:
+            self.isCastleMove =  isCastleMove
         #ID Mossa
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
+        print("")
       
 
     '''

@@ -54,6 +54,7 @@ def main():
                 if len(playerClicks) == 2: #Dopo il secondo click
                     move = ChessEngine.Move(playerClicks[0],playerClicks[1], gs.board)
                     print(move.getChessNotation())
+                    print(move.moveID)
                     if move in validMoves:
                         moveIndex = validMoves.index(move)
                         if validMoves[moveIndex].isEnpassantMove:

@@ -58,7 +58,10 @@ def main():
                         moveIndex = validMoves.index(move)
                         if validMoves[moveIndex].isEnpassantMove:
                             gs.makeMove(ChessEngine.Move(playerClicks[0],playerClicks[1], gs.board, isEnpassantMove=True))
-                        gs.makeMove(move)
+                        elif validMoves[moveIndex].isCastleMove:
+                            gs.makeMove(ChessEngine.Move(playerClicks[0],playerClicks[1], gs.board, isCastleMove=True))
+                        else:
+                            gs.makeMove(move)
                         moveMade = True
                         sqSelected = () #Reset degli input utente
                         playerClicks = []

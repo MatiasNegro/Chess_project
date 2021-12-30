@@ -27,6 +27,9 @@ class GameState():
         self.checkMate = False
         self.staleMate = False
         self.enpassantPossible = () #Inizializzazione delle  coordinate del quadrato ove è possibile eseguire l'enpassant
+        self.currentCastlingRights = CastleRights( True,True,True,True) #Gestione dell'arrocco
+        self.castleRightLog = [CastleRights(self.currentCastlingRights.whiteKingSide, self.currentCastlingRights.blackKingSide, 
+                                            self.currentCastlingRights.whiteQueenSide, self.currentCastlingRights.blackQueenSide)]
 
 
     
@@ -51,13 +54,29 @@ class GameState():
         #Enpassant
         if move.isEnpassantMove:
             self.board[move.startRow][move.endCol] = '--' #Cattura del pedone con enpassant
-            print(str(move.startRow) + " " + str(move.endCol) + "HO PREVISTO L'ENPASSANT")
+            
 
 
         if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
             self.enpassantPossible = ((move.startRow + move.endRow) // 2, move.endCol) 
         else:
             self.enpassantPossible = ()
+
+        if move.isCastleMove:
+            if move.endCol - move.startCol == 2: #Dal lato del re
+                self.board[move.endRow][move.endCol] = self.board[move.endRow][move.endCol + 1] #Copia la torre nel nuovo quadrato
+                self.board[move.endRow][move.endCol + 1] = '--' #Cancello la vecchia torre
+            else: #Dal lato della regina
+                self.board[move.endRow][move.endCol + 1] = self.board[move.endRow][move.endCol - 2] #Copia la torre nel nuovo quadrato
+                self.board[move.endRow][move.endCol - 2] = '--'
+            
+
+        #Aggiornamento della variabile di arrocco, ciò deve avvenire ogni volta ion cui avviene una mossa del re o torre
+        self.updateCastleRights(move)
+        self.castleRightLog.append(CastleRights(self.currentCastlingRights.whiteKingSide, self.currentCastlingRights.blackKingSide, 
+                                            self.currentCastlingRights.whiteQueenSide, self.currentCastlingRights.blackQueenSide))
+
+
                 
 
     #Torna indietro alla mossa eseguita prima di quella attuale
@@ -81,6 +100,43 @@ class GameState():
             if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
                 self.enpassantPossible = ()
 
+            #undo dei diritti di arrocco
+            self.castleRightLog.pop() #Togliamo i diritti di arrocco attuali
+            self.currentCastlingRights = self.castleRightLog[-1] #mettiamo i diritti di castling all'ultimo elemento della lista,
+                                                                 #ergo quello precedente  
+            #undo della mossa di arrocco
+            if move.isCastleMove:
+                if move.endCol - move.startCol == 2: #Dal lato del re
+                    self.board[move.endRow][move.endCol + 1] = self.board[move.endRow][move.endCol - 1]
+                    self.board[move.endRow][move.endCol - 1] = '--'
+                else:
+                    self.board[move.endRow][move.endCol - 2] = self.board[move.endRow][move.endCol + 1]
+                    self.board[move.endRow][move.endCol + 1] = '--'
+            
+
+
+    def updateCastleRights(self, move): #Controllare con switch case --> refactor
+        if move.pieceMoved == 'wK':
+            self.currentCastlingRights.whiteKingSide = False 
+            self.currentCastlingRights.whiteQueenSide = False
+        elif move.pieceMoved == 'bK':
+            self.currentCastlingRights.blackKingSide = False
+            self.currentCastlingRights.blackQueenSide = False
+        elif move.pieceMoved == 'wR':
+            if move.startRow == 7:
+                if move.startCol == 0: #Torre sinistra
+                    self.currentCastlingRights.whiteQueenSide = False
+                elif move.startCol == 7: #Torre destra
+                    self.currentCastlingRights.whiteKingSide = False
+        elif move.pieceMoved == 'bR':
+            if move.startRow == 0:
+                if move.startCol == 0: #Torre sinistra
+                    self.currentCastlingRights.whiteQueenSide = False
+                elif move.startCol == 7: #Torre destra
+                    self.currentCastlingRights.whiteKingSide = False
+
+         
+
 
     '''
     Mosse di controllo di scacco
@@ -88,8 +144,15 @@ class GameState():
     def getValidMoves(self):
         tempEnpassantPossible = self.enpassantPossible
         print("GENERO LE MOSSE DELL'AVVERSARIO")
-        #Utilizziamo l'algoritmo di Naiv
+        tempCastling = CastleRights(self.currentCastlingRights.whiteKingSide, self.currentCastlingRights.blackKingSide,
+                                    self.currentCastlingRights.whiteQueenSide, self.currentCastlingRights.blackQueenSide)
         moves = self.getAllPossibleMoves()
+        if self.whiteToMove:
+            self.getCastleMoves(self.whiteKingLocation[0], self.whiteKingLocation[1], moves, allyColor='w')
+        else:
+            self.getCastleMoves(self.blacKingLocation[0], self.blacKingLocation[1], moves, allyColor='b')
+
+        #Utilizziamo l'algoritmo di Naiv
         for i in range(len(moves) - 1, -1, -1):#Scorro la list al contrario per evitare bug di shift degli indici sugli elementi non ancora 
             self.makeMove(moves[i])    #controllati
             self.whiteToMove = not self.whiteToMove
@@ -107,12 +170,10 @@ class GameState():
                 print("SCACCO MATTO")
             else:
                 self.staleMate = True
-        #else:
-        #    self.checkMate = False
-        #    self.staleMate = False
 
-        
+        self.currentCastlingRights = tempCastling
         self.enpassantPossible = tempEnpassantPossible
+
 
         return moves
 
@@ -221,6 +282,26 @@ class GameState():
                 if endPiece[0] != allyColor:
                     moves.append(Move((r, c), (endRow, endCol), self.board))
 
+    #Genero tutte le mosse valide della torre per il re in posizione (r,c)
+    def getCastleMoves(self, r, c, moves, allyColor):
+        if self.squareUnderAttack(r, c):
+            return #Non si può fare l'arrocco se il re è in wscacco
+        if (self.whiteToMove and self.currentCastlingRights.whiteKingSide) or (not self.whiteToMove and self.currentCastlingRights.blackKingSide):
+            self.getKingSideCastleMoves(r, c, moves, allyColor)
+        if (self.whiteToMove and self.currentCastlingRights.whiteQueenSide) or (not self.whiteToMove and self.currentCastlingRights.blackQueenSide):
+             self.getQueenSideCastleMoves(r, c, moves, allyColor)
+
+    def getKingSideCastleMoves(self, r, c, moves, allyColor):
+        if self.board[r][c + 1] == '--' and self.board[r][c + 2] == '--':
+            if not self.squareUnderAttack(r, c + 1) and not self.squareUnderAttack(r, c + 2):
+                moves.append(Move((r, c), (r, c + 2), self.board, isCastleMove = True))
+
+    def getQueenSideCastleMoves(self, r, c, moves, allyColor):
+        if self.board[r][c - 1] == '--' and self.board[r][c - 2] == '--' and self.board[r][c - 3] == '--':
+            if not self.squareUnderAttack(r, c - 1) and not self.squareUnderAttack(r, c - 2):
+                moves.append(Move((r, c), (r, c - 2), self.board, isCastleMove = True))
+
+
     
     def getBishopMoves(self,r, c, moves):
         directions = ((-1, -1), (-1, 1), (1, -1), (1, 1))
@@ -258,6 +339,20 @@ class GameState():
                 if endPiece[0] != allyColor:
                     moves.append(Move((r, c), (endRow, endCol), self.board))
 
+'''Classe per gestione dell'arrocco, si potrebbe anche effettuare l'arrocco con un parametro interno alla gestione delle mosse dei pezzi 
+tramite l'aggiunta di un attributo nella classe Move.
+tale soluzione risulta al momento confusionale da implementare, pertanto si considera questo metodo.
+Eventualmente controllare tale opzione durante il refactor'''
+
+class CastleRights:
+    def __init__(self, whiteKingSide, blackKingSide, whiteQueenSide, blackQueenSide):
+        self.whiteKingSide = whiteKingSide
+        self.blackKingSide = blackKingSide
+        self.whiteQueenSide = whiteQueenSide
+        self.blackQueenSide = blackQueenSide 
+
+
+
 class Move(): #Nested class -> Move può stare dentro GameState
     #Mappatura dei valori sullo "standard" degli scacchi (di chess.com)
     ranksToRows = {"1": 7, "2": 6, "3": 5, "4": 4, "5": 3, "6": 2, "7": 1, "8": 0}
@@ -265,7 +360,7 @@ class Move(): #Nested class -> Move può stare dentro GameState
     filesToCols = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
     colsToFiles = {v: k for k, v in filesToCols.items()}
 
-    def __init__(self, startSq, endSq, board, isEnpassantMove = False): #Tutte le informazioni relative ad una mossa vengono definite e contenute qui
+    def __init__(self, startSq, endSq, board, isEnpassantMove = False, isCastleMove = False): #Tutte le informazioni relative ad una mossa vengono definite e contenute qui
         self.startRow = startSq[0]
         self.startCol = startSq[1]
         self.endRow = endSq[0]
@@ -280,7 +375,11 @@ class Move(): #Nested class -> Move può stare dentro GameState
         if self.isEnpassantMove:
             self.pieceCaptured = 'wP' if self.pieceMoved == 'bP' else 'bP'
 
+        #Arrocco
+        self.isCastleMove =  isCastleMove
+        #ID Mossa
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
+      
 
     '''
     Override equals __ -> indican l'override
@@ -297,3 +396,5 @@ class Move(): #Nested class -> Move può stare dentro GameState
         
     def getRankFile(self, r, c):
         return self.colsToFiles[c] + self.rowsToRanks[r]
+
+

@@ -95,7 +95,6 @@ class GameState():
                 self.board[move.endRow][move.endCol] = '--' #Lascia il quadrato vuoto
                 self.board[move.startRow][move.endCol] = move.pieceCaptured
                 self.enpassantPossible = (move.endRow, move.endCol)
-                print("HO FATTO L'UNDO DELL'ENPASSANT")
             
             if move.pieceMoved[1] == 'P' and abs(move.startRow - move.endRow) == 2:
                 self.enpassantPossible = ()
@@ -143,7 +142,6 @@ class GameState():
     '''
     def getValidMoves(self):
         tempEnpassantPossible = self.enpassantPossible
-        print("GENERO LE MOSSE DELL'AVVERSARIO")
         tempCastling = CastleRights(self.currentCastlingRights.whiteKingSide, self.currentCastlingRights.blackKingSide,
                                     self.currentCastlingRights.whiteQueenSide, self.currentCastlingRights.blackQueenSide)
         moves = self.getAllPossibleMoves()

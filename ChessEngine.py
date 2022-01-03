@@ -37,7 +37,7 @@ class GameState():
     Prende come parametro una mossa e la esegue (Non funziona per l'arrocco, promozione del pedone e en-passant)
     '''
     def makeMove(self, move):
-
+        
         self.board[move.startRow][move.startCol] = "--"
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.moveLog.append(move) #Aggiungo la mossa al log delle mosse definito in precedenza
@@ -100,6 +100,7 @@ class GameState():
                 self.enpassantPossible = ()
 
             #undo dei diritti di arrocco
+    
             self.castleRightLog.pop() #Togliamo i diritti di arrocco attuali
             self.currentCastlingRights = self.castleRightLog[-1] #mettiamo i diritti di castling all'ultimo elemento della lista,
                                                                  #ergo quello precedente  
@@ -142,8 +143,7 @@ class GameState():
     '''
     def getValidMoves(self):
         tempEnpassantPossible = self.enpassantPossible
-        tempCastling = CastleRights(self.currentCastlingRights.whiteKingSide, self.currentCastlingRights.blackKingSide,
-                                    self.currentCastlingRights.whiteQueenSide, self.currentCastlingRights.blackQueenSide)
+        tempCastling = CastleRights(self.currentCastlingRights.whiteKingSide, self.currentCastlingRights.blackKingSide, self.currentCastlingRights.whiteQueenSide, self.currentCastlingRights.blackQueenSide)
         moves = self.getAllPossibleMoves()
         if self.whiteToMove:
             self.getCastleMoves(self.whiteKingLocation[0], self.whiteKingLocation[1], moves, allyColor='w')
@@ -170,7 +170,10 @@ class GameState():
                 self.staleMate = True
 
         self.currentCastlingRights = tempCastling
+        print(str(self.currentCastlingRights.whiteKingSide) + " " +  str(self.currentCastlingRights.blackKingSide) + " " + str(self.currentCastlingRights.whiteQueenSide) + " " + str(self.currentCastlingRights.blackQueenSide) + " " , end='\n')
+
         self.enpassantPossible = tempEnpassantPossible
+
 
 
         return moves

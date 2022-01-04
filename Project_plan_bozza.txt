@@ -10,7 +10,7 @@ Project plan:
 
         (Introduzione da sistemare--Solo prima bozza)
 
-        (Manca lista degli obbiettivi--Sono da definire, ovvero non sapevo cosa scrivere)
+        (Manca lista degli obbiettivi--Sono da definire)
 
         Responsabili: Matias Negro, Daniele Greco
         
@@ -33,7 +33,7 @@ Project plan:
         Librarian: Matias Negro
         Tester: Daniele Greco
 
-    Standards, guidelines, procedures: CHE CAZZO CI METTO
+    Standards, guidelines, procedures: (da definire)
 
     Management Activities:
         Report Settimanale, devo inventarmi cosa ho fatto fin'ora in accordo con il calendario
@@ -47,14 +47,14 @@ Project plan:
         Matias Negro Tutta la durata del progetto
         Daniele Greco Tutta la durata del progetto
     
-    Methods and Tecniques: ???
+    Methods and Tecniques: (Da definire)
 
     Software Quality Assurance (SQA): 
         Farlo testare ai nostri amici??
 
     Decomposizione del progetto: UML -> Da fare
 
-    Rirsorse necessarie allo sviluppo:
+    Rirsorse necessarie allo sviluppo: (possibile cambio di sistema)
         HW:
             Computer
         SW: Compilatore python

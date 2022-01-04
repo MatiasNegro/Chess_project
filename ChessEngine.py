@@ -75,8 +75,7 @@ class GameState():
         self.updateCastleRights(move)
         self.castleRightLog.append(CastleRights(self.currentCastlingRights.whiteKingSide, self.currentCastlingRights.blackKingSide, 
                                             self.currentCastlingRights.whiteQueenSide, self.currentCastlingRights.blackQueenSide))
-
-
+        print("")
                 
 
     #Torna indietro alla mossa eseguita prima di quella attuale
@@ -102,6 +101,7 @@ class GameState():
             #undo dei diritti di arrocco
     
             self.castleRightLog.pop() #Togliamo i diritti di arrocco attuali
+            print("")
             self.currentCastlingRights = self.castleRightLog[-1] #mettiamo i diritti di castling all'ultimo elemento della lista,
                                                                  #ergo quello precedente  
             #undo della mossa di arrocco
@@ -119,16 +119,16 @@ class GameState():
         if move.pieceMoved == 'wK':
             self.currentCastlingRights.whiteKingSide = False 
             self.currentCastlingRights.whiteQueenSide = False
-        elif move.pieceMoved == 'bK':
+        if move.pieceMoved == 'bK':
             self.currentCastlingRights.blackKingSide = False
             self.currentCastlingRights.blackQueenSide = False
-        elif move.pieceMoved == 'wR':
+        if move.pieceMoved == 'wR':
             if move.startRow == 7:
                 if move.startCol == 0: #Torre sinistra
                     self.currentCastlingRights.whiteQueenSide = False
                 elif move.startCol == 7: #Torre destra
                     self.currentCastlingRights.whiteKingSide = False
-        elif move.pieceMoved == 'bR':
+        if move.pieceMoved == 'bR':
             if move.startRow == 0:
                 if move.startCol == 0: #Torre sinistra
                     self.currentCastlingRights.blackQueenSide = False
@@ -170,8 +170,10 @@ class GameState():
                 self.staleMate = True
 
         self.currentCastlingRights = tempCastling
+        '''print("Attuali")
         print(str(self.currentCastlingRights.whiteKingSide) + " " +  str(self.currentCastlingRights.blackKingSide) + " " + str(self.currentCastlingRights.whiteQueenSide) + " " + str(self.currentCastlingRights.blackQueenSide) + " " , end='\n')
-
+        print("Dentro log")
+        print(str(self.castleRightLog[-1].whiteKingSide) + " " + str(self.castleRightLog[-1].blackKingSide) + " " + str(self.castleRightLog[-1].whiteQueenSide) + " " + str(self.castleRightLog[-1].blackQueenSide) + " ", end="\n") '''
         self.enpassantPossible = tempEnpassantPossible
 
 

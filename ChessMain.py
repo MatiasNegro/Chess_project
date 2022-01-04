@@ -62,6 +62,9 @@ def main():
                             gs.makeMove(ChessEngine.Move(playerClicks[0],playerClicks[1], gs.board, isCastleMove=True))
                         else:
                             gs.makeMove(move)
+
+                        tempCastling = ChessEngine.CastleRights(gs.currentCastlingRights.whiteKingSide, gs.currentCastlingRights.blackKingSide, 
+                                            gs.currentCastlingRights.whiteQueenSide, gs.currentCastlingRights.blackQueenSide)
                         moveMade = True
                         sqSelected = () #Reset degli input utente
                         playerClicks = []
@@ -79,6 +82,8 @@ def main():
         
         if moveMade:
             validMoves = gs.getValidMoves()
+            gs.castleRightLog.pop()
+            gs.castleRightLog.append(tempCastling)
             moveMade = False
 
 

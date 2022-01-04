@@ -1,0 +1,9 @@
+1)Quando clicchi su un pezzo per muoverlo fai comparire dei pallini nelle posizioni disponibili, 
+    non so se è semplice sovrapporre un'immagine jpeg alla scacchiera
+2)ia con minimax o altro arlgoritmo di facile implementazione
+3)Possibilità di drag and drop dei pezzi
+4)evidenziare i quadrati dove è disponibile la mossa
+5)Menu iniziale con "nuova partita" e "esci"
+6)Tasto di pausa con lo stesso menu iniziale
+7)gui per iniziare il gioco e gui per scegliere il pezzo per la promozione del pedone
+8)multiplayer online

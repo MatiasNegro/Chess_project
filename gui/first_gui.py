@@ -4,7 +4,7 @@ import pygame
 class gui:
     def main():
         pygame.init()
-        manager = pygame_gui.UIManager((800, 600), './gui/theme.json')
+        manager = pygame_gui.UIManager((800, 600))
 
         pygame.display.set_caption('Quick Start')
         window_surface = pygame.display.set_mode((800, 600))
@@ -13,6 +13,7 @@ class gui:
         background.fill(pygame.Color('black'))
         clock = pygame.time.Clock()
         is_running = True
+        game_path = "game\ChessMain.py"
 
         hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 75), (200, 100)), text='New Game', manager=manager)
         exit_button =  pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 425), (200, 100)), text='Exit', manager=manager)
@@ -24,7 +25,7 @@ class gui:
                     is_running = False
                 if event.type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == hello_button:
-                        exec(open("./ChessMain.py").read())
+                        exec(open("game/ChessMain.py").read())
                         is_running = False
                     if event.ui_element == exit_button:
                         is_running = False
@@ -43,3 +44,5 @@ class gui:
 
             pygame.display.update()
 
+    if __name__ == "__main__":
+        main()

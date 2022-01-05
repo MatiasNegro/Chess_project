@@ -1,6 +1,6 @@
 #Driver file, responsabile de,la gestione dell'input utente e di mostare il GameState corrente
 import pygame as p
-import ChessEngine
+import game.ChessEngine as ChessEngine
 
 WIDTH = HEIGHT = 512 #in alternativa 400
 DIMENSION = 8 #la dimensione della scacchiera è 8x8

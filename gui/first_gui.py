@@ -4,20 +4,22 @@ import pygame
 class gui:
     def main():
         pygame.init()
-        manager = pygame_gui.UIManager((800, 600))
+        manager = pygame_gui.UIManager((960,960))
 
         pygame.display.set_caption('Quick Start')
-        window_surface = pygame.display.set_mode((800, 600))
+        window_surface = pygame.display.set_mode((960, 960))
 
-        background = pygame.Surface((800, 600))
+        background = pygame.Surface((960, 960))
         background.fill(pygame.Color('black'))
         clock = pygame.time.Clock()
         is_running = True
         game_path = "game\ChessMain.py"
 
-        hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 75), (200, 100)), text='New Game', manager=manager)
-        exit_button =  pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 425), (200, 100)), text='Exit', manager=manager)
-        options_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 250), (200, 100)), text='Options', manager=manager)
+
+        title_text_box = pygame_gui.elements.UILabel(relative_rect=pygame.rect(330,280,400,75), text="UNIBCHESS", manager=manager)
+        hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((280, 311), (300, 75)), text='SINGLEPLAYER', manager=manager)
+        exit_button =  pygame_gui.elements.UIButton(relative_rect=pygame.Rect((280, 341), (300, 75)), text='MULTIPLAYER', manager=manager)
+        options_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((280, 371), (300, 75)), text='EXIT', manager=manager)
         while is_running:
             time_delta = clock.tick(60)/1000.0
             for event in pygame.event.get():
